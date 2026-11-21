@@ -2,18 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('cinemaToggle');
   const statusDot = document.getElementById('statusDot');
   const statusText = document.getElementById('statusText');
-  const modKey = document.getElementById('modKey');
-  const osLabel = document.getElementById('osLabel');
   const STORAGE_KEY = 'cinemaModeEnabled';
-
-  const isMac = navigator.platform.toUpperCase().includes('MAC') || navigator.userAgent.includes('Macintosh');
-  if (isMac) {
-    modKey.textContent = 'Option';
-    osLabel.textContent = 'macOS Shortcut';
-  } else {
-    modKey.textContent = 'Alt';
-    osLabel.textContent = 'Windows / Linux';
-  }
 
   function updateUI(isEnabled) {
     toggle.checked = isEnabled;

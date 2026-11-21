@@ -23,7 +23,8 @@ body.ig-cinema-active .ig-cinema-messages-widget {
 body.ig-cinema-active .ig-cinema-stories-tray,
 body.ig-cinema-active main div[style*="height: 101"],
 body.ig-cinema-active main div[style*="height: 100"],
-body.ig-cinema-active main div[style*="height: 85"] {
+body.ig-cinema-active main div[style*="height: 85"],
+body.ig-cinema-active main div:has(button[aria-label*="Story" i]):not(:has(article)) {
   max-width: 630px !important;
   width: 100% !important;
   margin: 0 auto 24px auto !important;

@@ -51,80 +51,24 @@ window.IGCinema.LayoutManager = (() => {
         }
       }
 
-      const storyContainers = document.querySelectorAll('main div[style*="height: 101"], main div[style*="height: 100"], main div[style*="height: 85"]');
+      const storyContainers = document.querySelectorAll('main div[style*="height: 101"], main div[style*="height: 100"], main div[style*="height: 85"], main div:has(button[aria-label*="Story" i]):not(:has(article))');
       for (const sc of storyContainers) {
         sc.classList.add('ig-cinema-stories-tray');
         sc.style.setProperty('max-width', '630px', 'important');
         sc.style.setProperty('margin', '0 auto 24px auto', 'important');
       }
-
-      const articles = document.querySelectorAll('article');
-      for (const article of articles) {
-        let p = article.parentElement;
-        if (p && p.tagName !== 'MAIN' && p !== document.body) {
-          p.style.setProperty('max-width', '100%', 'important');
-          p.style.setProperty('width', '100%', 'important');
-        }
-      }
     } catch {}
   }
 
-  function detectOrientation(article) {
+  function applyWidescreen(article) {
     try {
-      if (article.querySelector('a[href*="/reels/"], a[href*="/reel/"]')) {
-        article.removeAttribute('data-cinema-mode');
-        return;
-      }
+      article.setAttribute('data-cinema-mode', 'widescreen');
 
-      const aspectContainer = article.querySelector('div[style*="padding-bottom"]');
-      if (aspectContainer) {
-        const pb = parseFloat(aspectContainer.style.paddingBottom || '100');
-        if (pb < 85) {
-          article.setAttribute('data-cinema-mode', 'widescreen');
-          return;
-        } else {
-          article.removeAttribute('data-cinema-mode');
-          return;
-        }
-      }
-
-      const video = article.querySelector('video');
-      if (video) {
-        if (video.videoWidth && video.videoHeight) {
-          if (video.videoWidth > video.videoHeight * 1.15) {
-            article.setAttribute('data-cinema-mode', 'widescreen');
-          } else {
-            article.removeAttribute('data-cinema-mode');
-          }
-          return;
-        } else {
-          video.addEventListener('loadedmetadata', () => {
-            if (video.videoWidth > video.videoHeight * 1.15) {
-              article.setAttribute('data-cinema-mode', 'widescreen');
-              expandMediaWrappers(article);
-            }
-          }, { once: true });
-        }
-      }
-
-      const img = article.querySelector('img:not(.ig-cinema-avatar):not([alt*="profile" i])');
-      if (img && img.naturalWidth && img.naturalHeight) {
-        if (img.naturalWidth > img.naturalHeight * 1.15) {
-          article.setAttribute('data-cinema-mode', 'widescreen');
-        } else {
-          article.removeAttribute('data-cinema-mode');
-        }
-        return;
-      }
-
-      article.removeAttribute('data-cinema-mode');
-    } catch {}
-  }
-
-  function expandMediaWrappers(article) {
-    try {
-      if (article.getAttribute('data-cinema-mode') !== 'widescreen') {
-        return;
+      let p = article.parentElement;
+      while (p && p.tagName !== 'MAIN' && p !== document.body) {
+        p.style.setProperty('max-width', '100%', 'important');
+        p.style.setProperty('width', '100%', 'important');
+        p = p.parentElement;
       }
 
       const mediaEl = article.querySelector('video, img:not(.ig-cinema-avatar):not([alt*="profile" i])');
@@ -136,6 +80,48 @@ window.IGCinema.LayoutManager = (() => {
           parent.style.setProperty('width', '100%', 'important');
           parent = parent.parentElement;
         }
+      }
+    } catch {}
+  }
+
+  function detectAndApplyWidescreen(article) {
+    try {
+      const aspectContainer = article.querySelector('div[style*="padding-bottom"]');
+      if (aspectContainer) {
+        const pb = parseFloat(aspectContainer.style.paddingBottom || '100');
+        if (pb < 88) {
+          applyWidescreen(article);
+          return;
+        } else if (pb > 105) {
+          article.removeAttribute('data-cinema-mode');
+          return;
+        }
+      }
+
+      const video = article.querySelector('video');
+      if (video) {
+        if (video.videoWidth && video.videoHeight) {
+          if (video.videoWidth > video.videoHeight * 1.05) {
+            applyWidescreen(article);
+          }
+          return;
+        } else {
+          const checkVideo = () => {
+            if (video.videoWidth && video.videoHeight && video.videoWidth > video.videoHeight * 1.05) {
+              applyWidescreen(article);
+            }
+          };
+          video.addEventListener('loadedmetadata', checkVideo, { once: true });
+          video.addEventListener('play', checkVideo, { once: true });
+        }
+      }
+
+      const img = article.querySelector('img:not(.ig-cinema-avatar):not([alt*="profile" i])');
+      if (img && img.naturalWidth && img.naturalHeight) {
+        if (img.naturalWidth > img.naturalHeight * 1.05) {
+          applyWidescreen(article);
+        }
+        return;
       }
     } catch {}
   }
@@ -156,8 +142,7 @@ window.IGCinema.LayoutManager = (() => {
         audioBtn.classList.add(CLASSES.AUDIO_BTN);
       }
 
-      detectOrientation(article);
-      expandMediaWrappers(article);
+      detectAndApplyWidescreen(article);
       article.setAttribute(CLASSES.PROCESSED, 'true');
     } catch {}
   }

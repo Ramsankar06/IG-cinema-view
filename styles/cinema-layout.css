@@ -8,7 +8,7 @@ body.ig-cinema-active main,
 body.ig-cinema-active main [role="main"] {
   max-width: 100% !important;
   width: 100% !important;
-  padding-top: 24px !important;
+  padding-top: 36px !important;
   box-sizing: border-box !important;
 }
 

@@ -3,7 +3,7 @@
 
   const { StateManager, LayoutManager, MediaScaler, Toast } = window.IGCinema;
 
-  let mutationScheduled = false;
+  let scanCooldown = false;
   let lastPathname = location.pathname;
 
   function handleKeyDown(e) {
@@ -46,15 +46,17 @@
   function scheduleBatchScan() {
     if (!StateManager.getActive()) return;
 
-    if (mutationScheduled) return;
-    mutationScheduled = true;
+    if (scanCooldown) return;
+    scanCooldown = true;
 
     requestAnimationFrame(() => {
-      mutationScheduled = false;
       if (StateManager.getActive()) {
         LayoutManager.scan();
         MediaScaler.scan();
       }
+      setTimeout(() => {
+        scanCooldown = false;
+      }, 200);
     });
   }
 
@@ -115,10 +117,21 @@
 
     window.addEventListener('keydown', handleKeyDown, true);
 
-    const observer = new MutationObserver(() => {
-      handleRouteChange();
+    const observer = new MutationObserver((mutations) => {
+      let hasAddedArticles = false;
+      for (const m of mutations) {
+        if (m.addedNodes.length > 0) {
+          for (const node of m.addedNodes) {
+            if (node.nodeType === 1 && (node.tagName === 'ARTICLE' || node.querySelector?.('article'))) {
+              hasAddedArticles = true;
+              break;
+            }
+          }
+        }
+        if (hasAddedArticles) break;
+      }
 
-      if (StateManager.getActive()) {
+      if (hasAddedArticles && StateManager.getActive()) {
         scheduleBatchScan();
       }
     });
@@ -127,8 +140,6 @@
       observer.observe(document.body, {
         childList: true,
         subtree: true,
-        attributes: true,
-        attributeFilter: ['src', 'srcset'],
       });
     }
   }

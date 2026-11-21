@@ -35,9 +35,7 @@ window.IGCinema.LayoutManager = (() => {
           }
         }
       }
-    } catch {
-      // Ignore
-    }
+    } catch {}
   }
 
   function expandFeed() {
@@ -63,24 +61,34 @@ window.IGCinema.LayoutManager = (() => {
           p = p.parentElement;
         }
       }
-    } catch {
-      // Ignore
-    }
+    } catch {}
   }
 
   function detectOrientation(article) {
     try {
-      const video = article.querySelector('video');
-      if (video && video.videoWidth && video.videoHeight) {
-        const ratio = video.videoWidth / video.videoHeight;
-        article.setAttribute('data-orientation', ratio < 0.9 ? 'portrait' : 'landscape');
+      if (article.querySelector('a[href*="/reels/"], a[href*="/reel/"]')) {
+        article.setAttribute('data-orientation', 'portrait');
         return;
+      }
+
+      const video = article.querySelector('video');
+      if (video) {
+        if (video.videoWidth && video.videoHeight) {
+          const ratio = video.videoWidth / video.videoHeight;
+          article.setAttribute('data-orientation', ratio < 0.95 ? 'portrait' : 'landscape');
+          return;
+        } else {
+          video.addEventListener('loadedmetadata', () => {
+            const ratio = video.videoWidth / video.videoHeight;
+            article.setAttribute('data-orientation', ratio < 0.95 ? 'portrait' : 'landscape');
+          }, { once: true });
+        }
       }
 
       const img = article.querySelector('img:not(.ig-cinema-avatar):not([alt*="profile" i])');
       if (img && img.naturalWidth && img.naturalHeight) {
         const ratio = img.naturalWidth / img.naturalHeight;
-        article.setAttribute('data-orientation', ratio < 0.9 ? 'portrait' : 'landscape');
+        article.setAttribute('data-orientation', ratio < 0.95 ? 'portrait' : 'landscape');
         return;
       }
 
@@ -97,13 +105,18 @@ window.IGCinema.LayoutManager = (() => {
       if (!article.hasAttribute('data-orientation')) {
         article.setAttribute('data-orientation', 'landscape');
       }
-    } catch {
-      // Ignore
-    }
+    } catch {}
   }
 
   function expandMediaWrappers(article) {
     try {
+      if (
+        article.getAttribute('data-orientation') === 'portrait' ||
+        article.querySelector('a[href*="/reels/"], a[href*="/reel/"]')
+      ) {
+        return;
+      }
+
       const mediaEl = article.querySelector('video, img:not(.ig-cinema-avatar):not([alt*="profile" i])');
       if (mediaEl) {
         let parent = mediaEl.parentElement;
@@ -114,9 +127,7 @@ window.IGCinema.LayoutManager = (() => {
           parent = parent.parentElement;
         }
       }
-    } catch {
-      // Ignore
-    }
+    } catch {}
   }
 
   function enhanceArticle(article) {
@@ -138,9 +149,7 @@ window.IGCinema.LayoutManager = (() => {
       detectOrientation(article);
       expandMediaWrappers(article);
       article.setAttribute(CLASSES.PROCESSED, 'true');
-    } catch {
-      // Ignore
-    }
+    } catch {}
   }
 
   function scan(container = document) {

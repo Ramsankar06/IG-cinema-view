@@ -51,24 +51,19 @@ window.IGCinema.LayoutManager = (() => {
         }
       }
 
-      const storyCandidates = document.querySelectorAll('main div');
-      for (const el of storyCandidates) {
-        if (el.querySelector('a[href*="/stories/"]') && !el.querySelector('article')) {
-          el.classList.add('ig-cinema-stories-tray');
-          el.style.setProperty('max-width', '640px', 'important');
-          el.style.setProperty('margin', '0 auto 28px auto', 'important');
-          break;
-        }
+      const storyContainers = document.querySelectorAll('main div[style*="height: 101"], main div[style*="height: 100"], main div[style*="height: 85"]');
+      for (const sc of storyContainers) {
+        sc.classList.add('ig-cinema-stories-tray');
+        sc.style.setProperty('max-width', '630px', 'important');
+        sc.style.setProperty('margin', '0 auto 24px auto', 'important');
       }
 
       const articles = document.querySelectorAll('article');
       for (const article of articles) {
         let p = article.parentElement;
-        while (p && p.tagName !== 'MAIN' && p !== document.body) {
-          p.classList.add('ig-cinema-feed-col');
+        if (p && p.tagName !== 'MAIN' && p !== document.body) {
           p.style.setProperty('max-width', '100%', 'important');
           p.style.setProperty('width', '100%', 'important');
-          p = p.parentElement;
         }
       }
     } catch {}
@@ -77,53 +72,58 @@ window.IGCinema.LayoutManager = (() => {
   function detectOrientation(article) {
     try {
       if (article.querySelector('a[href*="/reels/"], a[href*="/reel/"]')) {
-        article.setAttribute('data-orientation', 'portrait');
+        article.removeAttribute('data-cinema-mode');
         return;
+      }
+
+      const aspectContainer = article.querySelector('div[style*="padding-bottom"]');
+      if (aspectContainer) {
+        const pb = parseFloat(aspectContainer.style.paddingBottom || '100');
+        if (pb < 85) {
+          article.setAttribute('data-cinema-mode', 'widescreen');
+          return;
+        } else {
+          article.removeAttribute('data-cinema-mode');
+          return;
+        }
       }
 
       const video = article.querySelector('video');
       if (video) {
         if (video.videoWidth && video.videoHeight) {
-          const ratio = video.videoWidth / video.videoHeight;
-          article.setAttribute('data-orientation', ratio < 0.95 ? 'portrait' : 'landscape');
+          if (video.videoWidth > video.videoHeight * 1.15) {
+            article.setAttribute('data-cinema-mode', 'widescreen');
+          } else {
+            article.removeAttribute('data-cinema-mode');
+          }
           return;
         } else {
           video.addEventListener('loadedmetadata', () => {
-            const ratio = video.videoWidth / video.videoHeight;
-            article.setAttribute('data-orientation', ratio < 0.95 ? 'portrait' : 'landscape');
+            if (video.videoWidth > video.videoHeight * 1.15) {
+              article.setAttribute('data-cinema-mode', 'widescreen');
+              expandMediaWrappers(article);
+            }
           }, { once: true });
         }
       }
 
       const img = article.querySelector('img:not(.ig-cinema-avatar):not([alt*="profile" i])');
       if (img && img.naturalWidth && img.naturalHeight) {
-        const ratio = img.naturalWidth / img.naturalHeight;
-        article.setAttribute('data-orientation', ratio < 0.95 ? 'portrait' : 'landscape');
+        if (img.naturalWidth > img.naturalHeight * 1.15) {
+          article.setAttribute('data-cinema-mode', 'widescreen');
+        } else {
+          article.removeAttribute('data-cinema-mode');
+        }
         return;
       }
 
-      const aspectContainer = article.querySelector('div[style*="padding-bottom"]');
-      if (aspectContainer) {
-        const pb = aspectContainer.style.paddingBottom || '';
-        const num = parseFloat(pb);
-        if (num > 105) {
-          article.setAttribute('data-orientation', 'portrait');
-          return;
-        }
-      }
-
-      if (!article.hasAttribute('data-orientation')) {
-        article.setAttribute('data-orientation', 'landscape');
-      }
+      article.removeAttribute('data-cinema-mode');
     } catch {}
   }
 
   function expandMediaWrappers(article) {
     try {
-      if (
-        article.getAttribute('data-orientation') === 'portrait' ||
-        article.querySelector('a[href*="/reels/"], a[href*="/reel/"]')
-      ) {
+      if (article.getAttribute('data-cinema-mode') !== 'widescreen') {
         return;
       }
 

@@ -3,7 +3,7 @@
 
   const { StateManager, LayoutManager, MediaScaler, Toast } = window.IGCinema;
 
-  let scanCooldown = false;
+  let scanTimer = null;
   let lastPathname = location.pathname;
 
   function handleKeyDown(e) {
@@ -43,21 +43,16 @@
     }
   }
 
-  function scheduleBatchScan() {
+  function triggerScan() {
     if (!StateManager.getActive()) return;
 
-    if (scanCooldown) return;
-    scanCooldown = true;
-
-    requestAnimationFrame(() => {
+    if (scanTimer) clearTimeout(scanTimer);
+    scanTimer = setTimeout(() => {
       if (StateManager.getActive()) {
         LayoutManager.scan();
         MediaScaler.scan();
       }
-      setTimeout(() => {
-        scanCooldown = false;
-      }, 200);
-    });
+    }, 120);
   }
 
   function handleRouteChange() {
@@ -65,7 +60,7 @@
       lastPathname = location.pathname;
       const isActive = StateManager.sync();
       if (isActive) {
-        scheduleBatchScan();
+        triggerScan();
       }
     }
   }
@@ -118,21 +113,21 @@
     window.addEventListener('keydown', handleKeyDown, true);
 
     const observer = new MutationObserver((mutations) => {
-      let hasAddedArticles = false;
+      let hasNewArticles = false;
       for (const m of mutations) {
         if (m.addedNodes.length > 0) {
           for (const node of m.addedNodes) {
             if (node.nodeType === 1 && (node.tagName === 'ARTICLE' || node.querySelector?.('article'))) {
-              hasAddedArticles = true;
+              hasNewArticles = true;
               break;
             }
           }
         }
-        if (hasAddedArticles) break;
+        if (hasNewArticles) break;
       }
 
-      if (hasAddedArticles && StateManager.getActive()) {
-        scheduleBatchScan();
+      if (hasNewArticles && StateManager.getActive()) {
+        triggerScan();
       }
     });
 

@@ -51,6 +51,16 @@ window.IGCinema.LayoutManager = (() => {
         }
       }
 
+      const storyCandidates = document.querySelectorAll('main div');
+      for (const el of storyCandidates) {
+        if (el.querySelector('a[href*="/stories/"]') && !el.querySelector('article')) {
+          el.classList.add('ig-cinema-stories-tray');
+          el.style.setProperty('max-width', '640px', 'important');
+          el.style.setProperty('margin', '0 auto 28px auto', 'important');
+          break;
+        }
+      }
+
       const articles = document.querySelectorAll('article');
       for (const article of articles) {
         let p = article.parentElement;

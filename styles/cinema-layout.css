@@ -8,7 +8,7 @@ body.ig-cinema-active main,
 body.ig-cinema-active main [role="main"] {
   max-width: 100% !important;
   width: 100% !important;
-  padding-top: 36px !important;
+  padding-top: 24px !important;
   box-sizing: border-box !important;
 }
 
@@ -23,4 +23,11 @@ body.ig-cinema-active .ig-cinema-suggested-sidebar {
 
 body.ig-cinema-active .ig-cinema-messages-widget {
   display: none !important;
+}
+
+body.ig-cinema-active .ig-cinema-stories-tray,
+body.ig-cinema-active main div:has(> * a[href*="/stories/"]):not(:has(article)),
+body.ig-cinema-active main div:has(a[href*="/stories/"]):not(:has(article)) {
+  max-width: 640px !important;
+  margin: 0 auto 28px auto !important;
 }

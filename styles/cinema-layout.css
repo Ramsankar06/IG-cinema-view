@@ -1,0 +1,26 @@
+html.ig-cinema-active,
+body.ig-cinema-active {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+
+body.ig-cinema-active main,
+body.ig-cinema-active main [role="main"] {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-top: 24px !important;
+  box-sizing: border-box !important;
+}
+
+body.ig-cinema-active .ig-cinema-feed-col {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+body.ig-cinema-active .ig-cinema-suggested-sidebar {
+  display: none !important;
+}
+
+body.ig-cinema-active .ig-cinema-messages-widget {
+  display: none !important;
+}

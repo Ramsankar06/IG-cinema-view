@@ -1,0 +1,92 @@
+body.ig-cinema-active article {
+  width: 100% !important;
+  max-width: min(1200px, calc(100vw - 120px)) !important;
+  margin: 0 auto 40px auto !important;
+  position: relative !important;
+  background-color: #0b0b0b !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9) !important;
+  box-sizing: border-box !important;
+}
+
+body.ig-cinema-active article[data-orientation="portrait"] {
+  max-width: min(580px, calc(100vw - 120px)) !important;
+}
+
+body.ig-cinema-active article div[style*="max-width: 470"],
+body.ig-cinema-active article div[style*="max-width: 600"],
+body.ig-cinema-active article div[style*="max-width: 630"],
+body.ig-cinema-active article div[style*="width: 468"],
+body.ig-cinema-active article div[style*="width: 470"],
+body.ig-cinema-active article .ig-cinema-media-wrapper {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+body.ig-cinema-active article video {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 84vh !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+body.ig-cinema-active article img:not([alt*="profile" i]):not(.ig-cinema-avatar) {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 84vh !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+body.ig-cinema-active article ul,
+body.ig-cinema-active article ul > li {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+body.ig-cinema-active article button[aria-label*="Next" i],
+body.ig-cinema-active article button[aria-label*="Previous" i],
+body.ig-cinema-active article button[aria-label*="Back" i],
+body.ig-cinema-active article button[aria-label*="Forward" i] {
+  z-index: 35 !important;
+  opacity: 0.9 !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  border-radius: 50% !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+body.ig-cinema-active article button[aria-label*="Next" i]:hover,
+body.ig-cinema-active article button[aria-label*="Previous" i]:hover {
+  opacity: 1 !important;
+  transform: scale(1.1) !important;
+}
+
+body.ig-cinema-active article img.ig-cinema-avatar,
+body.ig-cinema-active article img[alt*="profile" i] {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  max-width: 42px !important;
+  max-height: 42px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+
+body.ig-cinema-active article .ig-cinema-audio-btn,
+body.ig-cinema-active article button[aria-label*="audio" i],
+body.ig-cinema-active article button[aria-label*="sound" i],
+body.ig-cinema-active article button[aria-label*="mute" i],
+body.ig-cinema-active article button[aria-label*="volume" i],
+body.ig-cinema-active article div[role="button"]:has(svg[aria-label*="audio" i]),
+body.ig-cinema-active article div:has(> button[aria-label*="audio" i]) {
+  z-index: 99 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}

@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "IG Cinema View",
+  "version": "1.2.1",
+  "description": "Transforms Instagram Web into a full-viewport, cinema-style viewing experience with adaptive aspect ratios and maximum media resolution.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.instagram.com/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "commands": {
+    "toggle-cinema-mode": {
+      "suggested_key": {
+        "default": "Alt+C",
+        "mac": "Alt+C"
+      },
+      "description": "Toggle Cinema Mode (Mac Option+C / Windows Alt+C)"
+    }
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "IG Cinema View",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.instagram.com/*"
+      ],
+      "css": [
+        "styles/cinema-core.css",
+        "styles/cinema-layout.css",
+        "styles/cinema-media.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://www.instagram.com/*"
+      ],
+      "js": [
+        "src/config.js",
+        "src/modules/toast.js",
+        "src/modules/state-manager.js",
+        "src/modules/media-scaler.js",
+        "src/modules/layout-manager.js",
+        "src/content-main.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -16,11 +16,6 @@ window.IGCinema.MediaScaler = (() => {
       return;
     }
 
-    const currentSizes = img.getAttribute('sizes');
-    if (currentSizes !== '100vw') {
-      img.setAttribute('sizes', '100vw');
-    }
-
     img.setAttribute(CLASSES.OPTIMIZED, 'true');
   }
 

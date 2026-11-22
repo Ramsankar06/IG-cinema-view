@@ -51,17 +51,33 @@ window.IGCinema.LayoutManager = (() => {
         }
       }
 
-      const storyContainers = document.querySelectorAll('main div[style*="height: 101"], main div[style*="height: 100"], main div[style*="height: 85"], main div:has(button[aria-label*="Story" i]):not(:has(article))');
-      for (const sc of storyContainers) {
-        sc.classList.add('ig-cinema-stories-tray');
-        sc.style.setProperty('max-width', '630px', 'important');
-        sc.style.setProperty('margin', '0 auto 24px auto', 'important');
+      const storyLink = document.querySelector('main a[href*="/stories/"], main button[aria-label*="Story" i]');
+      if (storyLink) {
+        let sc = storyLink.parentElement;
+        while (sc && sc.tagName !== 'MAIN' && sc.parentElement && !sc.parentElement.querySelector('article')) {
+          sc = sc.parentElement;
+        }
+        if (sc && !sc.querySelector('article')) {
+          sc.classList.add('ig-cinema-stories-tray');
+          sc.style.setProperty('max-width', '630px', 'important');
+          sc.style.setProperty('width', '100%', 'important');
+          sc.style.setProperty('margin', '0 auto 24px auto', 'important');
+        }
       }
     } catch {}
   }
 
+  function isCarousel(article) {
+    if (article.querySelector('ul')) return true;
+    if (article.querySelector('button[aria-label*="Next" i], button[aria-label*="Previous" i]')) return true;
+    if (article.querySelector('div[role="tablist"]')) return true;
+    return false;
+  }
+
   function applyWidescreen(article) {
     try {
+      if (isCarousel(article)) return;
+
       article.setAttribute('data-cinema-mode', 'widescreen');
 
       let p = article.parentElement;
@@ -86,13 +102,18 @@ window.IGCinema.LayoutManager = (() => {
 
   function detectAndApplyWidescreen(article) {
     try {
+      if (isCarousel(article)) {
+        article.removeAttribute('data-cinema-mode');
+        return;
+      }
+
       const aspectContainer = article.querySelector('div[style*="padding-bottom"]');
       if (aspectContainer) {
         const pb = parseFloat(aspectContainer.style.paddingBottom || '100');
-        if (pb < 88) {
+        if (pb <= 78 && pb > 30) {
           applyWidescreen(article);
           return;
-        } else if (pb > 105) {
+        } else if (pb > 78) {
           article.removeAttribute('data-cinema-mode');
           return;
         }
@@ -101,13 +122,16 @@ window.IGCinema.LayoutManager = (() => {
       const video = article.querySelector('video');
       if (video) {
         if (video.videoWidth && video.videoHeight) {
-          if (video.videoWidth > video.videoHeight * 1.05) {
+          if (video.videoWidth > video.videoHeight * 1.15) {
             applyWidescreen(article);
+          } else {
+            article.removeAttribute('data-cinema-mode');
           }
           return;
         } else {
           const checkVideo = () => {
-            if (video.videoWidth && video.videoHeight && video.videoWidth > video.videoHeight * 1.05) {
+            if (isCarousel(article)) return;
+            if (video.videoWidth && video.videoHeight && video.videoWidth > video.videoHeight * 1.15) {
               applyWidescreen(article);
             }
           };
@@ -117,11 +141,27 @@ window.IGCinema.LayoutManager = (() => {
       }
 
       const img = article.querySelector('img:not(.ig-cinema-avatar):not([alt*="profile" i])');
-      if (img && img.naturalWidth && img.naturalHeight) {
-        if (img.naturalWidth > img.naturalHeight * 1.05) {
-          applyWidescreen(article);
+      if (img) {
+        if (img.naturalWidth && img.naturalHeight) {
+          if (img.naturalWidth > img.naturalHeight * 1.15) {
+            applyWidescreen(article);
+          } else {
+            article.removeAttribute('data-cinema-mode');
+          }
+          return;
+        } else {
+          const checkImg = () => {
+            if (isCarousel(article)) return;
+            if (img.naturalWidth && img.naturalHeight && img.naturalWidth > img.naturalHeight * 1.15) {
+              applyWidescreen(article);
+            }
+          };
+          if (img.complete) {
+            checkImg();
+          } else {
+            img.addEventListener('load', checkImg, { once: true });
+          }
         }
-        return;
       }
     } catch {}
   }

@@ -1,17 +1,17 @@
 body.ig-cinema-active article {
   width: 100% !important;
-  max-width: min(630px, calc(100vw - 120px));
+  max-width: 630px !important;
   margin: 24px auto 36px auto !important;
-  position: relative !important;
-  background-color: #0b0b0b !important;
-  border-radius: 16px !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9) !important;
   box-sizing: border-box !important;
 }
 
 body.ig-cinema-active article[data-cinema-mode="widescreen"] {
   max-width: min(1200px, calc(100vw - 120px)) !important;
+  position: relative !important;
+  background-color: #0b0b0b !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9) !important;
 }
 
 body.ig-cinema-active article[data-cinema-mode="widescreen"] div[style*="max-width: 470"],
@@ -33,29 +33,6 @@ body.ig-cinema-active article[data-cinema-mode="widescreen"] img:not([alt*="prof
   display: block !important;
 }
 
-body.ig-cinema-active article video,
-body.ig-cinema-active article img:not([alt*="profile" i]):not(.ig-cinema-avatar) {
-  max-height: 84vh !important;
-  object-fit: contain !important;
-}
-
-body.ig-cinema-active article button[aria-label*="Next" i],
-body.ig-cinema-active article button[aria-label*="Previous" i],
-body.ig-cinema-active article button[aria-label*="Back" i],
-body.ig-cinema-active article button[aria-label*="Forward" i] {
-  z-index: 35 !important;
-  opacity: 0.9 !important;
-  background: rgba(0, 0, 0, 0.7) !important;
-  border-radius: 50% !important;
-  transition: opacity 0.2s ease, transform 0.2s ease !important;
-}
-
-body.ig-cinema-active article button[aria-label*="Next" i]:hover,
-body.ig-cinema-active article button[aria-label*="Previous" i]:hover {
-  opacity: 1 !important;
-  transform: scale(1.1) !important;
-}
-
 body.ig-cinema-active article img.ig-cinema-avatar,
 body.ig-cinema-active article img[alt*="profile" i] {
   width: 42px !important;
@@ -68,13 +45,13 @@ body.ig-cinema-active article img[alt*="profile" i] {
   object-fit: cover !important;
 }
 
-body.ig-cinema-active article .ig-cinema-audio-btn,
-body.ig-cinema-active article button[aria-label*="audio" i],
-body.ig-cinema-active article button[aria-label*="sound" i],
-body.ig-cinema-active article button[aria-label*="mute" i],
-body.ig-cinema-active article button[aria-label*="volume" i],
-body.ig-cinema-active article div[role="button"]:has(svg[aria-label*="audio" i]),
-body.ig-cinema-active article div:has(> button[aria-label*="audio" i]) {
+body.ig-cinema-active article[data-cinema-mode="widescreen"] .ig-cinema-audio-btn,
+body.ig-cinema-active article[data-cinema-mode="widescreen"] button[aria-label*="audio" i],
+body.ig-cinema-active article[data-cinema-mode="widescreen"] button[aria-label*="sound" i],
+body.ig-cinema-active article[data-cinema-mode="widescreen"] button[aria-label*="mute" i],
+body.ig-cinema-active article[data-cinema-mode="widescreen"] button[aria-label*="volume" i],
+body.ig-cinema-active article[data-cinema-mode="widescreen"] div[role="button"]:has(svg[aria-label*="audio" i]),
+body.ig-cinema-active article[data-cinema-mode="widescreen"] div:has(> button[aria-label*="audio" i]) {
   z-index: 99 !important;
   opacity: 1 !important;
   visibility: visible !important;
